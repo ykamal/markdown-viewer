@@ -34,8 +34,14 @@ export async function openTab({ path, scroll }: OpenRequest) {
   strip.append(tab.el);
   docs.append(doc.scroller);
   activate(tab);
+  invoke("watch", { path }).catch(() => {});
   await refresh(tab, true);
   doc.scroller.scrollTop = scroll;
+}
+
+export function reloadPath(path: string) {
+  const tab = tabs.find((t) => t.doc.path === path);
+  if (tab) refresh(tab, true);
 }
 
 export function reloadActive() {
@@ -84,6 +90,7 @@ function closeTab(tab: Tab) {
   tabs.splice(index, 1);
   tab.el.remove();
   tab.doc.scroller.remove();
+  invoke("unwatch", { path: tab.doc.path });
   if (tab !== active) return;
 
   active = undefined;

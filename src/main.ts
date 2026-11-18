@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
-import { closeActive, cycleTabs, openTab, reloadActive, rerenderAll, type OpenRequest } from "./tabs";
+import { closeActive, cycleTabs, openTab, reloadActive, reloadPath, rerenderAll, type OpenRequest } from "./tabs";
 import { cycleTheme, onThemeChange, setTheme } from "./theme";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
 
@@ -47,6 +47,7 @@ getCurrentWebview().onDragDropEvent((event) => {
 });
 
 await listen<string>("menu", ({ payload }) => actions[payload]?.());
+await listen<string>("file-changed", ({ payload }) => reloadPath(payload));
 await listen<OpenRequest[]>("open-files", ({ payload }) => payload.forEach(openTab));
 const pending = await invoke<OpenRequest[]>("window_ready");
 pending.forEach(openTab);

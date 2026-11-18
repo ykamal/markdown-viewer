@@ -1,4 +1,5 @@
 mod menu;
+mod watcher;
 mod windows;
 
 use std::path::PathBuf;
@@ -21,10 +22,14 @@ pub fn run() {
         .on_menu_event(|app, event| menu::handle(app, event.id().as_ref()))
         .on_window_event(|window, event| match event {
             WindowEvent::Focused(true) => windows::focused(window.app_handle(), window.label()),
-            WindowEvent::Destroyed => windows::destroyed(window.app_handle(), window.label()),
+            WindowEvent::Destroyed => {
+                windows::destroyed(window.app_handle(), window.label());
+                window.state::<watcher::Watcher>().forget_window(window.label());
+            }
             _ => {}
         })
         .setup(|app| {
+            app.manage(watcher::Watcher::new(app.handle().clone())?);
             let cwd = std::env::current_dir().unwrap_or_default();
             windows::open_paths(app.handle(), std::env::args_os().skip(1).map(|arg| cwd.join(arg)).collect());
             Ok(())
@@ -33,7 +38,9 @@ pub fn run() {
             read_file,
             windows::window_ready,
             windows::new_window,
-            windows::drop_tab
+            windows::drop_tab,
+            watcher::watch,
+            watcher::unwatch
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
