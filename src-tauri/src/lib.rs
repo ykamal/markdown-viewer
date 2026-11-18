@@ -3,7 +3,8 @@ mod recent;
 mod watcher;
 mod windows;
 
-use std::path::PathBuf;
+use std::ffi::OsString;
+use std::path::{Path, PathBuf};
 
 use tauri::{Manager, WindowEvent};
 
@@ -13,9 +14,22 @@ async fn read_file(path: PathBuf) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&bytes).into_owned())
 }
 
+fn paths_from_args(args: impl IntoIterator<Item = impl Into<OsString>>, cwd: &Path) -> Vec<PathBuf> {
+    args.into_iter().skip(1).map(|arg| cwd.join(arg.into())).collect()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
+            let paths = paths_from_args(args, Path::new(&cwd));
+            if paths.iter().any(|path| path.is_file()) {
+                windows::open_paths(app, paths);
+            } else if let Some(window) = windows::target(app) {
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(windows::Windows::default())
@@ -33,7 +47,7 @@ pub fn run() {
             app.manage(recent::Recent::load(app.handle()));
             app.set_menu(menu::build(app.handle())?)?;
             let cwd = std::env::current_dir().unwrap_or_default();
-            windows::open_paths(app.handle(), std::env::args_os().skip(1).map(|arg| cwd.join(arg)).collect());
+            windows::open_paths(app.handle(), paths_from_args(std::env::args_os(), &cwd));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -46,6 +60,14 @@ pub fn run() {
             recent::recent_files,
             recent::add_recent
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
+
+    #[allow(unused_variables)]
+    app.run(|app, event| {
+        #[cfg(target_os = "macos")]
+        if let tauri::RunEvent::Opened { urls } = event {
+            windows::open_paths(app, urls.iter().filter_map(|url| url.to_file_path().ok()).collect());
+        }
+    });
 }

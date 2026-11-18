@@ -1,6 +1,8 @@
 use tauri::menu::{IsMenuItem, Menu, MenuItem, Submenu, SubmenuBuilder};
 use tauri::{AppHandle, Emitter, Manager, Wry};
 
+use tauri_plugin_dialog::DialogExt;
+
 use crate::{recent, windows};
 
 fn item(app: &AppHandle, id: &str, text: &str, accelerator: Option<&str>) -> tauri::Result<MenuItem<Wry>> {
@@ -26,8 +28,9 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .item(&recent)
         .separator()
         .item(&item(app, "close-tab", "Close Tab", Some("CmdOrCtrl+W"))?);
+    let make_default = item(app, "make-default", "Set as Default Markdown App…", None)?;
     if !cfg!(target_os = "macos") {
-        file = file.separator().quit();
+        file = file.separator().item(&make_default).separator().quit();
     }
 
     let edit = SubmenuBuilder::new(app, "Edit")
@@ -65,6 +68,8 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
             SubmenuBuilder::new(app, "Readme Viewer")
                 .about(None)
                 .separator()
+                .item(&make_default)
+                .separator()
                 .services()
                 .separator()
                 .hide()
@@ -98,9 +103,23 @@ pub fn handle(app: &AppHandle, id: &str) {
         }
     } else if id == "clear-recent" {
         recent::clear(app);
+    } else if id == "make-default" {
+        make_default(app);
     } else if id == "new-window" {
         let _ = windows::create(app, Vec::new(), None);
     } else if let Some(window) = windows::target(app) {
         let _ = app.emit_to(window.label(), "menu", id);
     }
+}
+
+fn make_default(app: &AppHandle) {
+    let text = if cfg!(target_os = "windows") {
+        let _ = tauri_plugin_opener::open_url("ms-settings:defaultapps", None::<&str>);
+        "In Default apps, search for .md and pick Readme Viewer."
+    } else if cfg!(target_os = "macos") {
+        "In Finder, select any .md file and press Cmd+I. Under \"Open with\", pick Readme Viewer and click \"Change All…\"."
+    } else {
+        "Right click any .md file in your file manager, open its properties and pick Readme Viewer as the default app."
+    };
+    app.dialog().message(text).title("Set as default").show(|_| {});
 }
