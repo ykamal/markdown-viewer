@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "readme-viewer",
+  "productName": "Readme Viewer",
   "version": "0.1.0",
   "identifier": "com.ykamal.readmeviewer",
   "build": {
@@ -10,12 +10,14 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "readme-viewer",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "Readme Viewer",
+        "width": 1000,
+        "height": 760,
+        "minWidth": 420,
+        "minHeight": 300
       }
     ],
     "security": {
