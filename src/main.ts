@@ -11,7 +11,7 @@ let current: Doc | undefined;
 
 async function openFile(path: string) {
   if (!docs || !start) return;
-  const doc = createDoc(path);
+  const doc = createDoc(path, openFile);
   try {
     await loadDoc(doc);
   } catch (error) {
