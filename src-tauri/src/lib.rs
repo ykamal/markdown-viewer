@@ -1,4 +1,5 @@
 mod menu;
+mod recent;
 mod watcher;
 mod windows;
 
@@ -18,7 +19,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(windows::Windows::default())
-        .menu(|app| menu::build(app))
         .on_menu_event(|app, event| menu::handle(app, event.id().as_ref()))
         .on_window_event(|window, event| match event {
             WindowEvent::Focused(true) => windows::focused(window.app_handle(), window.label()),
@@ -30,6 +30,8 @@ pub fn run() {
         })
         .setup(|app| {
             app.manage(watcher::Watcher::new(app.handle().clone())?);
+            app.manage(recent::Recent::load(app.handle()));
+            app.set_menu(menu::build(app.handle())?)?;
             let cwd = std::env::current_dir().unwrap_or_default();
             windows::open_paths(app.handle(), std::env::args_os().skip(1).map(|arg| cwd.join(arg)).collect());
             Ok(())
@@ -40,7 +42,9 @@ pub fn run() {
             windows::new_window,
             windows::drop_tab,
             watcher::watch,
-            watcher::unwatch
+            watcher::unwatch,
+            recent::recent_files,
+            recent::add_recent
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

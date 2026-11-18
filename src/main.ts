@@ -2,8 +2,20 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
-import { closeActive, cycleTabs, openTab, reloadActive, reloadPath, rerenderAll, type OpenRequest } from "./tabs";
+import { closeFind, findNext, openFind, updateFind } from "./find";
+import { showRecent } from "./recent";
+import {
+  closeActive,
+  cycleTabs,
+  onActiveChange,
+  openTab,
+  reloadActive,
+  reloadPath,
+  rerenderAll,
+  type OpenRequest,
+} from "./tabs";
 import { cycleTheme, onThemeChange, setTheme } from "./theme";
+import { toggleToc, updateToc } from "./toc";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
 
 function openPaths(paths: string[]) {
@@ -25,6 +37,11 @@ const actions: Record<string, () => void> = {
   open: pickFiles,
   "close-tab": closeActive,
   reload: reloadActive,
+  toc: toggleToc,
+  find: openFind,
+  "find-next": () => findNext(1),
+  "find-prev": () => findNext(-1),
+  "find-close": closeFind,
   "next-tab": () => cycleTabs(1),
   "prev-tab": () => cycleTabs(-1),
   theme: cycleTheme,
@@ -41,6 +58,10 @@ for (const button of document.querySelectorAll<HTMLElement>("[data-action]")) {
 }
 
 onThemeChange(rerenderAll);
+onActiveChange((doc) => {
+  updateToc(doc);
+  updateFind(doc);
+});
 
 getCurrentWebview().onDragDropEvent((event) => {
   if (event.payload.type === "drop") openPaths(event.payload.paths);
@@ -49,5 +70,6 @@ getCurrentWebview().onDragDropEvent((event) => {
 await listen<string>("menu", ({ payload }) => actions[payload]?.());
 await listen<string>("file-changed", ({ payload }) => reloadPath(payload));
 await listen<OpenRequest[]>("open-files", ({ payload }) => payload.forEach(openTab));
+await showRecent((path) => openPaths([path]));
 const pending = await invoke<OpenRequest[]>("window_ready");
 pending.forEach(openTab);

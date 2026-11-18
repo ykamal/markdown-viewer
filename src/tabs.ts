@@ -22,6 +22,11 @@ const start = element("#start");
 const appWindow = getCurrentWindow();
 const tabs: Tab[] = [];
 let active: Tab | undefined;
+let changed: (doc?: Doc) => void = () => {};
+
+export function onActiveChange(callback: (doc?: Doc) => void) {
+  changed = callback;
+}
 
 export async function openTab({ path, scroll }: OpenRequest) {
   const existing = tabs.find((tab) => tab.doc.path === path);
@@ -35,7 +40,7 @@ export async function openTab({ path, scroll }: OpenRequest) {
   docs.append(doc.scroller);
   activate(tab);
   invoke("watch", { path }).catch(() => {});
-  await refresh(tab, true);
+  if (await refresh(tab, true)) invoke("add_recent", { path });
   doc.scroller.scrollTop = scroll;
 }
 
@@ -68,10 +73,14 @@ async function refresh(tab: Tab, read: boolean) {
   try {
     if (read) await loadDoc(tab.doc);
     else await renderDoc(tab.doc);
+    return true;
   } catch (error) {
     tab.doc.body.textContent = `Couldn't open ${tab.doc.path}: ${error}`;
+    return false;
+  } finally {
+    scroller.scrollTop = top;
+    if (tab === active) changed(tab.doc);
   }
-  scroller.scrollTop = top;
 }
 
 function activate(tab: Tab) {
@@ -83,6 +92,7 @@ function activate(tab: Tab) {
   tab.el.scrollIntoView({ block: "nearest", inline: "nearest" });
   start.hidden = true;
   appWindow.setTitle(basename(tab.doc.path));
+  changed(tab.doc);
 }
 
 function closeTab(tab: Tab) {
@@ -100,6 +110,7 @@ function closeTab(tab: Tab) {
   } else {
     start.hidden = false;
     appWindow.setTitle("Readme Viewer");
+    changed();
   }
 }
 
