@@ -1,14 +1,15 @@
+import { element } from "./dom";
 import { onSetting, saveSetting } from "./settings";
 
 const steps = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3];
-const label = document.querySelector<HTMLElement>("#zoom-level");
+const label = element("#zoom-level");
 
 let zoom = Number(localStorage.getItem("zoom")) || 1;
 
 function apply(value: number) {
   zoom = value;
   document.documentElement.style.setProperty("--zoom", String(zoom));
-  if (label) label.textContent = `${Math.round(zoom * 100)}%`;
+  label.textContent = `${Math.round(zoom * 100)}%`;
 }
 
 function set(value: number) {

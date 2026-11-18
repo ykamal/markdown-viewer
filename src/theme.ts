@@ -45,10 +45,13 @@ export function onThemeChange(callback: () => void) {
   changed = callback;
 }
 
+export function setTheme(value: string) {
+  setMode(parse(value));
+  saveSetting("theme", mode);
+}
+
 export function cycleTheme() {
-  const next = modes[(modes.indexOf(mode) + 1) % modes.length];
-  setMode(next);
-  saveSetting("theme", next);
+  setTheme(modes[(modes.indexOf(mode) + 1) % modes.length]);
 }
 
 media.addEventListener("change", apply);

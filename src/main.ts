@@ -1,28 +1,13 @@
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
-import { createDoc, loadDoc, renderDoc, type Doc } from "./doc";
-import { basename } from "./paths";
-import { cycleTheme, onThemeChange } from "./theme";
+import { closeActive, cycleTabs, openTab, reloadActive, rerenderAll, type OpenRequest } from "./tabs";
+import { cycleTheme, onThemeChange, setTheme } from "./theme";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
 
-const docs = document.querySelector<HTMLElement>("#docs");
-const start = document.querySelector<HTMLElement>("#start");
-let current: Doc | undefined;
-
-async function openFile(path: string) {
-  if (!docs || !start) return;
-  const doc = createDoc(path, openFile);
-  try {
-    await loadDoc(doc);
-  } catch (error) {
-    doc.body.textContent = `Couldn't open ${path}: ${error}`;
-  }
-  current?.scroller.remove();
-  current = doc;
-  docs.append(doc.scroller);
-  start.hidden = true;
-  getCurrentWindow().setTitle(basename(path));
+function openPaths(paths: string[]) {
+  for (const path of paths) openTab({ path, scroll: 0 });
 }
 
 async function pickFiles() {
@@ -33,12 +18,19 @@ async function pickFiles() {
       { name: "All files", extensions: ["*"] },
     ],
   });
-  for (const path of picked ?? []) await openFile(path);
+  openPaths(picked ?? []);
 }
 
 const actions: Record<string, () => void> = {
   open: pickFiles,
+  "close-tab": closeActive,
+  reload: reloadActive,
+  "next-tab": () => cycleTabs(1),
+  "prev-tab": () => cycleTabs(-1),
   theme: cycleTheme,
+  "theme-system": () => setTheme("system"),
+  "theme-light": () => setTheme("light"),
+  "theme-dark": () => setTheme("dark"),
   "zoom-in": zoomIn,
   "zoom-out": zoomOut,
   "zoom-reset": resetZoom,
@@ -48,11 +40,13 @@ for (const button of document.querySelectorAll<HTMLElement>("[data-action]")) {
   button.addEventListener("click", () => actions[button.dataset.action ?? ""]?.());
 }
 
-onThemeChange(() => {
-  if (current) renderDoc(current);
+onThemeChange(rerenderAll);
+
+getCurrentWebview().onDragDropEvent((event) => {
+  if (event.payload.type === "drop") openPaths(event.payload.paths);
 });
 
-getCurrentWebview().onDragDropEvent(async (event) => {
-  if (event.payload.type !== "drop") return;
-  for (const path of event.payload.paths) await openFile(path);
-});
+await listen<string>("menu", ({ payload }) => actions[payload]?.());
+await listen<OpenRequest[]>("open-files", ({ payload }) => payload.forEach(openTab));
+const pending = await invoke<OpenRequest[]>("window_ready");
+pending.forEach(openTab);
