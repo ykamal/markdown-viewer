@@ -1,9 +1,10 @@
-import "github-markdown-css/github-markdown.css";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
-import { createDoc, loadDoc, type Doc } from "./doc";
+import { createDoc, loadDoc, renderDoc, type Doc } from "./doc";
 import { basename } from "./paths";
+import { cycleTheme, onThemeChange } from "./theme";
+import { resetZoom, zoomIn, zoomOut } from "./zoom";
 
 const docs = document.querySelector<HTMLElement>("#docs");
 const start = document.querySelector<HTMLElement>("#start");
@@ -35,9 +36,21 @@ async function pickFiles() {
   for (const path of picked ?? []) await openFile(path);
 }
 
-for (const button of document.querySelectorAll("[data-action=open]")) {
-  button.addEventListener("click", pickFiles);
+const actions: Record<string, () => void> = {
+  open: pickFiles,
+  theme: cycleTheme,
+  "zoom-in": zoomIn,
+  "zoom-out": zoomOut,
+  "zoom-reset": resetZoom,
+};
+
+for (const button of document.querySelectorAll<HTMLElement>("[data-action]")) {
+  button.addEventListener("click", () => actions[button.dataset.action ?? ""]?.());
 }
+
+onThemeChange(() => {
+  if (current) renderDoc(current);
+});
 
 getCurrentWebview().onDragDropEvent(async (event) => {
   if (event.payload.type !== "drop") return;
