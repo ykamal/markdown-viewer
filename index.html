@@ -8,6 +8,21 @@
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
-    <main id="app"></main>
+    <header class="toolbar">
+      <div class="tabs" id="tabs"></div>
+      <div class="actions">
+        <button class="icon" data-action="open" title="Open file">
+          <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+        </button>
+      </div>
+    </header>
+    <div class="content">
+      <div class="docs" id="docs"></div>
+      <div class="start" id="start">
+        <h1>Readme Viewer</h1>
+        <p>Drop a markdown file here, or</p>
+        <button data-action="open">Open a file</button>
+      </div>
+    </div>
   </body>
 </html>
