@@ -1,10 +1,12 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { enhance } from "./enhance";
 import { render } from "./render";
 import { dirname, isMarkdown, resolvePath } from "./paths";
 
 export interface Doc {
   path: string;
+  source: string;
   scroller: HTMLElement;
   body: HTMLElement;
 }
@@ -35,13 +37,18 @@ export function createDoc(path: string, openMarkdown: (path: string) => void): D
     }
   });
 
-  return { path, scroller, body };
+  return { path, source: "", scroller, body };
 }
 
 export async function loadDoc(doc: Doc) {
-  const source = await invoke<string>("read_file", { path: doc.path });
-  doc.body.replaceChildren(render(source));
+  doc.source = await invoke<string>("read_file", { path: doc.path });
+  await renderDoc(doc);
+}
+
+export async function renderDoc(doc: Doc) {
+  doc.body.replaceChildren(render(doc.source));
   localizeImages(doc);
+  await enhance(doc.body);
 }
 
 function localizeImages(doc: Doc) {
