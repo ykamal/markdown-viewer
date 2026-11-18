@@ -16,6 +16,7 @@ import {
 } from "./tabs";
 import { cycleTheme, onThemeChange, setTheme } from "./theme";
 import { toggleToc, updateToc } from "./toc";
+import { checkForUpdates, dismissUpdate, installUpdate } from "./updater";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
 
 function openPaths(paths: string[]) {
@@ -51,6 +52,9 @@ const actions: Record<string, () => void> = {
   "zoom-in": zoomIn,
   "zoom-out": zoomOut,
   "zoom-reset": resetZoom,
+  "check-updates": () => checkForUpdates(true),
+  "update-install": installUpdate,
+  "update-dismiss": dismissUpdate,
 };
 
 for (const button of document.querySelectorAll<HTMLElement>("[data-action]")) {

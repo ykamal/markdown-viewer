@@ -404,3 +404,25 @@ mark.find-hit.current {
   background: transparent;
   text-align: center;
 }
+
+.update {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--chrome);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+}
+
+.update .primary {
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+}

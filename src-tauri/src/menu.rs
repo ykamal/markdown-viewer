@@ -29,8 +29,9 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .separator()
         .item(&item(app, "close-tab", "Close Tab", Some("CmdOrCtrl+W"))?);
     let make_default = item(app, "make-default", "Set as Default Markdown App…", None)?;
+    let updates = item(app, "check-updates", "Check for Updates…", None)?;
     if !cfg!(target_os = "macos") {
-        file = file.separator().item(&make_default).separator().quit();
+        file = file.separator().item(&make_default).item(&updates).separator().quit();
     }
 
     let edit = SubmenuBuilder::new(app, "Edit")
@@ -68,6 +69,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
             SubmenuBuilder::new(app, "Readme Viewer")
                 .about(None)
                 .separator()
+                .item(&updates)
                 .item(&make_default)
                 .separator()
                 .services()

@@ -35,24 +35,43 @@
         "font-src": "'self' data:",
         "connect-src": "ipc: http://ipc.localhost ws://localhost:1420"
       },
-      "dangerousDisableAssetCspModification": ["style-src"],
+      "dangerousDisableAssetCspModification": [
+        "style-src"
+      ],
       "assetProtocol": {
         "enable": true,
-        "scope": ["**"]
+        "scope": [
+          "**"
+        ]
       }
     }
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [
+      "app",
+      "dmg",
+      "nsis",
+      "appimage",
+      "deb",
+      "rpm"
+    ],
     "fileAssociations": [
       {
-        "ext": ["md", "markdown", "mdown", "mkd", "mkdn"],
+        "ext": [
+          "md",
+          "markdown",
+          "mdown",
+          "mkd",
+          "mkdn"
+        ],
         "name": "Markdown",
         "description": "Markdown document",
         "role": "Viewer",
         "mimeType": "text/markdown",
-        "contentTypes": ["net.daringfireball.markdown"]
+        "contentTypes": [
+          "net.daringfireball.markdown"
+        ]
       }
     ],
     "icon": [
@@ -61,6 +80,15 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "",
+      "endpoints": [
+        "https://github.com/ykamal/readme-viewer/releases/latest/download/latest.json"
+      ]
+    }
   }
 }
