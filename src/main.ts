@@ -20,6 +20,7 @@ import { onThemeChange, setTheme, showThemeMenu } from "./theme";
 import { toggleToc, updateToc } from "./toc";
 import { checkForUpdates, dismissUpdate, installUpdate } from "./updater";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
+import { closeViewer, isViewerOpen, viewerReset, viewerZoomIn, viewerZoomOut } from "./zoomable";
 
 function openPaths(paths: string[]) {
   for (const path of paths) openTab({ path, scroll: 0 });
@@ -51,9 +52,11 @@ const actions: Record<string, () => void> = {
   "theme-system": () => setTheme("system"),
   "theme-light": () => setTheme("light"),
   "theme-dark": () => setTheme("dark"),
-  "zoom-in": zoomIn,
-  "zoom-out": zoomOut,
-  "zoom-reset": resetZoom,
+  "zoom-in": () => (isViewerOpen() ? viewerZoomIn() : zoomIn()),
+  "zoom-out": () => (isViewerOpen() ? viewerZoomOut() : zoomOut()),
+  "zoom-reset": () => (isViewerOpen() ? viewerReset() : resetZoom()),
+  "viewer-reset": viewerReset,
+  "viewer-close": closeViewer,
   "check-updates": () => checkForUpdates(true),
   "update-install": installUpdate,
   "update-dismiss": dismissUpdate,

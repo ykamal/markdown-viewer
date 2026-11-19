@@ -1,7 +1,9 @@
 import { isDark } from "./theme";
+import { makeZoomable } from "./zoomable";
 
 export async function enhance(body: HTMLElement) {
   await Promise.all([highlight(body), math(body), diagrams(body)]);
+  makeZoomable(body);
 }
 
 async function highlight(body: HTMLElement) {

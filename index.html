@@ -58,6 +58,23 @@
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
         </button>
       </div>
+      <div class="viewer" id="viewer" hidden>
+        <div class="viewer-stage" id="viewer-stage"></div>
+        <div class="viewer-controls">
+          <button class="icon" data-action="zoom-out" title="Zoom out">
+            <svg viewBox="0 0 24 24"><path d="M6 12h12" /></svg>
+          </button>
+          <button class="icon" data-action="zoom-in" title="Zoom in">
+            <svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12" /></svg>
+          </button>
+          <button class="icon" data-action="viewer-reset" title="Reset">
+            <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+          </button>
+          <button class="icon" data-action="viewer-close" title="Close (Esc)">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+      </div>
       <div class="start" id="start">
         <h1>Readme Viewer</h1>
         <p>Drop a markdown file here, or</p>
