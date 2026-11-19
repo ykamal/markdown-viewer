@@ -66,6 +66,7 @@ button {
 }
 
 .tabs {
+  position: relative;
   display: flex;
   flex: 1;
   min-width: 0;
@@ -108,9 +109,8 @@ button {
   display: none;
 }
 
-[data-mode="system"] .theme .system,
-[data-mode="light"] .theme .light,
-[data-mode="dark"] .theme .dark {
+[data-theme="light"] .theme .light,
+[data-theme="dark"] .theme .dark {
   display: block;
 }
 
@@ -180,7 +180,42 @@ button {
 }
 
 .tab.dragging {
-  opacity: 0.6;
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: inset 0 2px 0 var(--accent), 0 2px 8px rgb(0 0 0 / 0.18);
+}
+
+.tab.detached {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.dragging-tab,
+.dragging-tab * {
+  cursor: grabbing !important;
+}
+
+.tabs.drop-target {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.drop-marker {
+  position: relative;
+  flex: 0 0 0;
+}
+
+.drop-marker::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: -1px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
 }
 
 .tab-title {
@@ -213,9 +248,7 @@ button {
 }
 
 .markdown-body {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 32px 40px 64px;
+  padding: 32px 48px 64px;
   zoom: var(--zoom, 1);
 }
 

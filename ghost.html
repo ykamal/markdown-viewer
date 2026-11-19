@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tab</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        cursor: grabbing;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        color: #1f2328;
+        border-top: 2px solid #0969da;
+      }
+
+      [data-theme="dark"] body {
+        background: #151b23;
+        color: #f0f6fc;
+        border-color: #4493f8;
+      }
+
+      svg {
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: 0.7;
+      }
+
+      span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    </style>
+    <script type="module" src="/src/ghost.ts"></script>
+  </head>
+  <body>
+    <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /></svg>
+    <span id="title"></span>
+  </body>
+</html>

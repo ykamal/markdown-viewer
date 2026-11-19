@@ -5,6 +5,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { closeFind, findNext, openFind, updateFind } from "./find";
 import { showRecent } from "./recent";
 import {
+  clearDropTarget,
   closeActive,
   cycleTabs,
   onActiveChange,
@@ -12,9 +13,10 @@ import {
   reloadActive,
   reloadPath,
   rerenderAll,
+  showDropTarget,
   type OpenRequest,
 } from "./tabs";
-import { cycleTheme, onThemeChange, setTheme } from "./theme";
+import { onThemeChange, setTheme, showThemeMenu } from "./theme";
 import { toggleToc, updateToc } from "./toc";
 import { checkForUpdates, dismissUpdate, installUpdate } from "./updater";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
@@ -45,7 +47,7 @@ const actions: Record<string, () => void> = {
   "find-close": closeFind,
   "next-tab": () => cycleTabs(1),
   "prev-tab": () => cycleTabs(-1),
-  theme: cycleTheme,
+  theme: showThemeMenu,
   "theme-system": () => setTheme("system"),
   "theme-light": () => setTheme("light"),
   "theme-dark": () => setTheme("dark"),
@@ -73,6 +75,8 @@ getCurrentWebview().onDragDropEvent((event) => {
 
 await listen<string>("menu", ({ payload }) => actions[payload]?.());
 await listen<string>("file-changed", ({ payload }) => reloadPath(payload));
+await listen<number>("tab-drag-over", ({ payload }) => showDropTarget(payload));
+await listen("tab-drag-leave", clearDropTarget);
 await listen<OpenRequest[]>("open-files", ({ payload }) => payload.forEach(openTab));
 await showRecent((path) => openPaths([path]));
 const pending = await invoke<OpenRequest[]>("window_ready");

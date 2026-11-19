@@ -1,3 +1,4 @@
+import { Menu } from "@tauri-apps/api/menu";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import lightCss from "github-markdown-css/github-markdown-light.css?inline";
 import darkCss from "github-markdown-css/github-markdown-dark.css?inline";
@@ -7,6 +8,7 @@ import { onSetting, saveSetting } from "./settings";
 
 const modes = ["system", "light", "dark"] as const;
 type Mode = (typeof modes)[number];
+const labels: Record<Mode, string> = { system: "Match System", light: "Light", dark: "Dark" };
 
 const media = matchMedia("(prefers-color-scheme: dark)");
 const style = document.createElement("style");
@@ -22,8 +24,7 @@ function parse(value: string | null): Mode {
 
 function apply() {
   const next = mode === "dark" || (mode === "system" && media.matches);
-  document.documentElement.dataset.mode = mode;
-  document.querySelector("[data-action=theme]")?.setAttribute("title", `Theme: ${mode}`);
+  document.querySelector("[data-action=theme]")?.setAttribute("title", `Appearance: ${labels[mode]}`);
   if (next === dark) return;
   dark = next;
   document.documentElement.dataset.theme = dark ? "dark" : "light";
@@ -50,8 +51,11 @@ export function setTheme(value: string) {
   saveSetting("theme", mode);
 }
 
-export function cycleTheme() {
-  setTheme(modes[(modes.indexOf(mode) + 1) % modes.length]);
+export async function showThemeMenu() {
+  const menu = await Menu.new({
+    items: modes.map((m) => ({ text: labels[m], checked: m === mode, action: () => setTheme(m) })),
+  });
+  await menu.popup();
 }
 
 media.addEventListener("change", apply);

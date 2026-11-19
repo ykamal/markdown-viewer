@@ -9,4 +9,9 @@ export default defineConfig({
       ignored: ["**/src-tauri/**"],
     },
   },
+  build: {
+    rolldownOptions: {
+      input: ["index.html", "ghost.html"],
+    },
+  },
 });

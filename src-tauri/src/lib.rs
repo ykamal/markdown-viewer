@@ -57,6 +57,8 @@ pub fn run() {
             windows::window_ready,
             windows::new_window,
             windows::drop_tab,
+            windows::drag_tab_move,
+            windows::drag_tab_end,
             watcher::watch,
             watcher::unwatch,
             recent::recent_files,

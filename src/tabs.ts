@@ -23,6 +23,9 @@ const appWindow = getCurrentWindow();
 const tabs: Tab[] = [];
 let active: Tab | undefined;
 let changed: (doc?: Doc) => void = () => {};
+let dropIndex: number | undefined;
+const marker = document.createElement("div");
+marker.className = "drop-marker";
 
 export function onActiveChange(callback: (doc?: Doc) => void) {
   changed = callback;
@@ -35,13 +38,35 @@ export async function openTab({ path, scroll }: OpenRequest) {
   const doc = createDoc(path, (target) => openTab({ path: target, scroll: 0 }));
   const tab: Tab = { doc, el: document.createElement("div") };
   setupTab(tab);
-  tabs.push(tab);
-  strip.append(tab.el);
+  const at = dropIndex ?? tabs.length;
+  strip.insertBefore(tab.el, tabs[at]?.el ?? null);
+  tabs.splice(at, 0, tab);
   docs.append(doc.scroller);
   activate(tab);
   invoke("watch", { path }).catch(() => {});
   if (await refresh(tab, true)) invoke("add_recent", { path });
   doc.scroller.scrollTop = scroll;
+}
+
+export function showDropTarget(x: number) {
+  dropIndex = indexAt(x);
+  strip.classList.add("drop-target");
+  strip.insertBefore(marker, tabs[dropIndex]?.el ?? null);
+}
+
+export function clearDropTarget() {
+  dropIndex = undefined;
+  strip.classList.remove("drop-target");
+  marker.remove();
+}
+
+function indexAt(x: number, skip?: Tab) {
+  const others = tabs.filter((t) => t !== skip);
+  const index = others.findIndex((t) => {
+    const rect = t.el.getBoundingClientRect();
+    return x < rect.left + rect.width / 2;
+  });
+  return index < 0 ? others.length : index;
 }
 
 export function reloadPath(path: string) {
@@ -168,39 +193,92 @@ function drag(tab: Tab, down: PointerEvent) {
   if (down.button !== 0 || (down.target instanceof Element && down.target.closest(".tab-close"))) return;
   activate(tab);
   tab.el.setPointerCapture(down.pointerId);
+  const grab = down.clientX - tab.el.getBoundingClientRect().left;
+  const title = basename(tab.doc.path);
   let dragging = false;
+  let detached = false;
+  let frame = 0;
+  let pending: Promise<unknown> | undefined;
+  let queued = false;
+
+  const sendMove = () => {
+    if (pending) {
+      queued = true;
+      return;
+    }
+    pending = invoke("drag_tab_move", { title })
+      .catch(() => {})
+      .finally(() => {
+        pending = undefined;
+        if (queued && dragging && detached) sendMove();
+        queued = false;
+      });
+  };
+
+  const endGhost = async () => {
+    await pending;
+    await invoke("drag_tab_end");
+  };
 
   const move = (event: PointerEvent) => {
     if (!dragging && Math.hypot(event.clientX - down.clientX, event.clientY - down.clientY) < 5) return;
-    dragging = true;
-    tab.el.classList.add("dragging");
+    if (!dragging) {
+      dragging = true;
+      tab.el.classList.add("dragging");
+      document.documentElement.classList.add("dragging-tab");
+    }
 
-    const others = tabs.filter((t) => t !== tab);
-    let index = others.findIndex((t) => {
-      const rect = t.el.getBoundingClientRect();
-      return event.clientX < rect.left + rect.width / 2;
-    });
-    if (index < 0) index = others.length;
-    if (tabs.indexOf(tab) === index) return;
-    tabs.splice(tabs.indexOf(tab), 1);
-    tabs.splice(index, 0, tab);
-    strip.insertBefore(tab.el, others[index]?.el ?? null);
+    const bar = strip.getBoundingClientRect();
+    const wasDetached = detached;
+    detached =
+      event.clientY < bar.top - 24 ||
+      event.clientY > bar.bottom + 24 ||
+      event.clientX < bar.left ||
+      event.clientX > bar.right;
+    tab.el.classList.toggle("detached", detached);
+
+    if (detached) {
+      tab.el.style.transform = "";
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(sendMove);
+      return;
+    }
+    if (wasDetached) endGhost();
+
+    const index = indexAt(event.clientX, tab);
+    if (tabs.indexOf(tab) !== index) {
+      const others = tabs.filter((t) => t !== tab);
+      strip.insertBefore(tab.el, others[index]?.el ?? null);
+      tabs.splice(tabs.indexOf(tab), 1);
+      tabs.splice(index, 0, tab);
+    }
+    const slot = bar.left + tab.el.offsetLeft - strip.scrollLeft;
+    tab.el.style.transform = `translateX(${event.clientX - grab - slot}px)`;
   };
 
-  const up = async (event: PointerEvent) => {
+  const finish = async (drop: boolean) => {
+    const wasDragging = dragging;
+    dragging = false;
     tab.el.removeEventListener("pointermove", move);
-    tab.el.removeEventListener("pointerup", up);
-    tab.el.classList.remove("dragging");
-    const outside =
-      event.clientX < 0 || event.clientY < 0 || event.clientX > innerWidth || event.clientY > innerHeight;
-    if (!dragging || !outside) return;
+    tab.el.removeEventListener("pointerup", onUp);
+    tab.el.removeEventListener("pointercancel", onCancel);
+    cancelAnimationFrame(frame);
+    tab.el.classList.remove("dragging", "detached");
+    tab.el.style.transform = "";
+    document.documentElement.classList.remove("dragging-tab");
+    if (!wasDragging || !detached) return;
+    if (!drop) return endGhost();
 
+    await pending;
     const moved = await invoke<boolean>("drop_tab", { file: request(tab), detach: tabs.length > 1 });
     if (!moved) return;
     closeTab(tab);
     if (!tabs.length) appWindow.close();
   };
+  const onUp = () => finish(true);
+  const onCancel = () => finish(false);
 
   tab.el.addEventListener("pointermove", move);
-  tab.el.addEventListener("pointerup", up);
+  tab.el.addEventListener("pointerup", onUp);
+  tab.el.addEventListener("pointercancel", onCancel);
 }
