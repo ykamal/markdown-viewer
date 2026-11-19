@@ -1,7 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
+import { element } from "./dom";
 import { closeFind, findNext, openFind, updateFind } from "./find";
 import { showRecent } from "./recent";
 import {
@@ -17,10 +19,16 @@ import {
   type OpenRequest,
 } from "./tabs";
 import { onThemeChange, setTheme, showThemeMenu } from "./theme";
-import { toggleToc, updateToc } from "./toc";
+import { searchToc, toggleToc, updateToc } from "./toc";
 import { checkForUpdates, dismissUpdate, installUpdate } from "./updater";
 import { resetZoom, zoomIn, zoomOut } from "./zoom";
 import { closeViewer, isViewerOpen, viewerReset, viewerZoomIn, viewerZoomOut } from "./zoomable";
+
+const mac = navigator.userAgent.includes("Mac");
+const appWindow = getCurrentWindow();
+const dropOverlay = element("#drop-overlay");
+document.documentElement.classList.toggle("mac", mac);
+element("#open-shortcut").textContent = mac ? "⌘O" : "Ctrl+O";
 
 function openPaths(paths: string[]) {
   for (const path of paths) openTab({ path, scroll: 0 });
@@ -41,7 +49,8 @@ const actions: Record<string, () => void> = {
   open: pickFiles,
   "close-tab": closeActive,
   reload: reloadActive,
-  toc: toggleToc,
+  toc: () => toggleToc(),
+  "toc-search": searchToc,
   find: openFind,
   "find-next": () => findNext(1),
   "find-prev": () => findNext(-1),
@@ -72,9 +81,23 @@ onActiveChange((doc) => {
   updateFind(doc);
 });
 
-getCurrentWebview().onDragDropEvent((event) => {
-  if (event.payload.type === "drop") openPaths(event.payload.paths);
+getCurrentWebview().onDragDropEvent(({ payload }) => {
+  dropOverlay.hidden = payload.type !== "enter" && payload.type !== "over";
+  if (payload.type === "drop") openPaths(payload.paths);
 });
+
+document.addEventListener("contextmenu", (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  if (!target?.closest(".markdown-body, input")) event.preventDefault();
+});
+
+async function trackFullscreen() {
+  document.documentElement.classList.toggle("fullscreen", await appWindow.isFullscreen());
+}
+if (mac) {
+  window.addEventListener("resize", trackFullscreen);
+  trackFullscreen();
+}
 
 await listen<string>("menu", ({ payload }) => actions[payload]?.());
 await listen<string>("file-changed", ({ payload }) => reloadPath(payload));

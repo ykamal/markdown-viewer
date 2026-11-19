@@ -41,6 +41,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .item(&item(app, "find", "Find…", Some("CmdOrCtrl+F"))?)
         .item(&item(app, "find-next", "Find Next", Some("CmdOrCtrl+G"))?)
         .item(&item(app, "find-prev", "Find Previous", Some("CmdOrCtrl+Shift+G"))?)
+        .item(&item(app, "toc-search", "Search Contents…", Some("CmdOrCtrl+Shift+F"))?)
         .build()?;
 
     let theme = SubmenuBuilder::new(app, "Theme")
@@ -50,7 +51,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .build()?;
 
     let view = SubmenuBuilder::new(app, "View")
-        .item(&item(app, "toc", "Table of Contents", Some("CmdOrCtrl+Shift+L"))?)
+        .item(&item(app, "toc", "Toggle Contents Sidebar", Some("CmdOrCtrl+Shift+L"))?)
         .item(&item(app, "reload", "Reload", Some("CmdOrCtrl+R"))?)
         .separator()
         .item(&item(app, "zoom-in", "Zoom In", Some("CmdOrCtrl+="))?)
