@@ -183,6 +183,24 @@ kbd {
   color: var(--fg);
 }
 
+.search-field .clear {
+  display: grid;
+  place-items: center;
+  margin-right: -4px;
+  padding: 2px;
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+.search-field .clear:hover {
+  color: var(--fg);
+}
+
+.search-field .clear svg {
+  width: 15px;
+  height: 15px;
+}
+
 .search-field input::placeholder {
   color: var(--muted);
 }
@@ -803,4 +821,38 @@ mark.find-hit.current {
 
 .mac:not(.fullscreen) .viewer-stage {
   padding-top: 72px;
+}
+
+@media print {
+  html,
+  body,
+  .content,
+  .docs {
+    display: block;
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+
+  .toolbar,
+  .sidebar,
+  .find,
+  .update,
+  .viewer,
+  .start,
+  .drop-overlay,
+  .zoom-controls,
+  .doc:not(.active) {
+    display: none !important;
+  }
+
+  .doc.active {
+    position: static;
+    overflow: visible;
+  }
+
+  .markdown-body {
+    padding: 0;
+    zoom: 1;
+  }
 }

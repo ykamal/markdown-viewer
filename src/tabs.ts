@@ -74,6 +74,10 @@ export function reloadPath(path: string) {
   if (tab) refresh(tab, true);
 }
 
+export function hasTabs() {
+  return tabs.length > 0;
+}
+
 export function reloadActive() {
   if (active) refresh(active, true);
 }

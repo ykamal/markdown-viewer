@@ -7,6 +7,7 @@ const nav = element("#toc");
 const title = element("#sidebar-title");
 const empty = element("#toc-empty");
 const filter = element("#toc-filter", HTMLInputElement);
+const clear = element("#toc-clear");
 const resizer = element("#sidebar-resizer");
 
 let headings: HTMLElement[] = [];
@@ -15,7 +16,7 @@ let scroller: HTMLElement | undefined;
 let frame = 0;
 let selected = -1;
 
-sidebar.hidden = localStorage.getItem("toc") !== "open";
+sidebar.hidden = localStorage.getItem("toc") === "closed";
 sidebar.style.width = `${Number(localStorage.getItem("toc-width")) || 260}px`;
 
 export function toggleToc(show = sidebar.hidden) {
@@ -59,6 +60,7 @@ function applyFilter() {
     link.hidden = !!query && !(link.textContent ?? "").toLowerCase().includes(query);
   }
   nav.classList.toggle("filtering", !!query);
+  clear.hidden = !filter.value;
   select(-1);
 
   const count = visible().length;
@@ -86,6 +88,12 @@ function highlight() {
 }
 
 filter.addEventListener("input", applyFilter);
+
+clear.addEventListener("click", () => {
+  filter.value = "";
+  applyFilter();
+  filter.focus();
+});
 
 filter.addEventListener("keydown", (event) => {
   if (event.key === "ArrowDown" || event.key === "ArrowUp") {

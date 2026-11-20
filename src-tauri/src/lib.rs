@@ -14,6 +14,11 @@ async fn read_file(path: PathBuf) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&bytes).into_owned())
 }
 
+#[tauri::command]
+fn print_page(window: tauri::WebviewWindow) -> Result<(), String> {
+    window.print().map_err(|e| e.to_string())
+}
+
 fn paths_from_args(args: impl IntoIterator<Item = impl Into<OsString>>, cwd: &Path) -> Vec<PathBuf> {
     args.into_iter().skip(1).map(|arg| cwd.join(arg.into())).collect()
 }
@@ -54,6 +59,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             read_file,
+            print_page,
             windows::window_ready,
             windows::new_window,
             windows::drop_tab,

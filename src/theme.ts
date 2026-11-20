@@ -28,7 +28,9 @@ function apply() {
   if (next === dark) return;
   dark = next;
   document.documentElement.dataset.theme = dark ? "dark" : "light";
-  style.textContent = dark ? darkCss + codeDarkCss : lightCss + codeLightCss;
+  style.textContent = dark
+    ? `${darkCss}${codeDarkCss}@media print{${lightCss}${codeLightCss}}`
+    : lightCss + codeLightCss;
   changed();
 }
 

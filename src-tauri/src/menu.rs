@@ -27,6 +27,8 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .item(&item(app, "new-window", "New Window", Some("CmdOrCtrl+Shift+N"))?)
         .item(&recent)
         .separator()
+        .item(&item(app, "print", "Print…", Some("CmdOrCtrl+P"))?)
+        .separator()
         .item(&item(app, "close-tab", "Close Tab", Some("CmdOrCtrl+W"))?);
     let make_default = item(app, "make-default", "Set as Default Markdown App…", None)?;
     let updates = item(app, "check-updates", "Check for Updates…", None)?;

@@ -10,6 +10,7 @@ import {
   clearDropTarget,
   closeActive,
   cycleTabs,
+  hasTabs,
   onActiveChange,
   openTab,
   reloadActive,
@@ -45,8 +46,15 @@ async function pickFiles() {
   openPaths(picked ?? []);
 }
 
+function print() {
+  if (!hasTabs()) return;
+  if (mac) invoke("print_page");
+  else window.print();
+}
+
 const actions: Record<string, () => void> = {
   open: pickFiles,
+  print,
   "close-tab": closeActive,
   reload: reloadActive,
   toc: () => toggleToc(),
