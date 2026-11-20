@@ -32,7 +32,7 @@ Auto updates work for the macOS, Windows and AppImage builds. If you installed t
 
 The builds aren't code signed yet, so the first launch needs a little nudge:
 
-- **macOS**: right click the app, choose Open, then confirm. You only have to do this once.
+- **macOS**: open the app once and close the warning. Then go to System Settings, Privacy & Security, scroll down and click "Open Anyway". You only have to do this once.
 - **Windows**: SmartScreen may warn you. Click "More info" and then "Run anyway".
 
 ### Making it the default for markdown files
