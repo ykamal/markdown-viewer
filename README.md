@@ -12,14 +12,16 @@ I have to review a lot of markdown files but could not find something that suits
 
 ## What it does
 
-- Renders GitHub flavored markdown: tables, task lists, footnotes, alerts (`> [!NOTE]`), emoji shortcodes and raw HTML like `<details>` or centered images
-- Mermaid diagrams, math with KaTeX and syntax highlighting for code blocks
-- Reloads the file when it changes on disk and keeps your scroll position
-- Tabs, multiple windows, and you can drag a tab to another window (or out of the window to give it it's own)
-- Table of contents sidebar, find in page and a recent files list
-- Light, dark or follow the system, plus zoom
-- Can be set as the default app for `.md` files
-- Updates itself
+- **GitHub style rendering.** Tables, task lists, footnotes, alerts like `> [!NOTE]`, emoji shortcodes and HTML such as `<details>` all look the way you expect.
+- **Diagrams, math and code.** Mermaid diagrams, KaTeX math and syntax highlighting work out of the box.
+- **Live reload.** Save the file in your editor and the viewer updates right away, without losing your place.
+- **Tabs and windows.** Open several files at once, and drag a tab into another window or out on its own.
+- **Easy to get around.** A table of contents sidebar you can filter, find in page and a list of recent files.
+- **Light and dark themes.** Pick one or let it follow your system. Zoom in and out as you like.
+- **Your default .md app.** Set it once and double clicking any markdown file opens it here.
+- **Small and fast.** It is built with Tauri, so the download is tiny and it opens almost instantly.
+- **Works offline.** Everything is bundled. The only things it fetches are remote images inside a file (like badges) and the update check.
+- **Keeps itself up to date.** New versions install from inside the app.
 
 Everything is bundled with the app, so it works fully offline. The only network stuff is remote images inside a README (badges and so on) and the update check.
 
