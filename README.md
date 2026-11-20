@@ -25,17 +25,49 @@ Grab the latest build from the [releases page](https://github.com/ykamal/readme-
 
 | OS | File |
 |---|---|
-| macOS (Apple Silicon) | `Readme.Viewer_x.y.z_aarch64.dmg` |
+| macOS (Apple Silicon, M1 and newer) | `Readme.Viewer_x.y.z_aarch64.dmg` |
 | macOS (Intel) | `Readme.Viewer_x.y.z_x64.dmg` |
 | Windows | `Readme.Viewer_x.y.z_x64-setup.exe` |
-| Linux | `.AppImage`, `.deb` or `.rpm` |
+| Linux (any distro) | `Readme.Viewer_x.y.z_amd64.AppImage` |
+| Debian, Ubuntu | `Readme.Viewer_x.y.z_amd64.deb` |
+| Fedora, openSUSE | `Readme.Viewer-x.y.z-1.x86_64.rpm` |
+
+You can ignore `latest.json`, the `.app.tar.gz` files and the `.sig` files, those are for the auto updater.
 
 Auto updates work for the macOS, Windows and AppImage builds. If you installed the `.deb` or `.rpm`, just install the newer package when a release comes out.
 
-The builds aren't code signed yet, so the first launch needs a little nudge:
+### macOS
 
-- **macOS**: open the app once and close the warning. Then go to System Settings, Privacy & Security, scroll down and click "Open Anyway". You only have to do this once.
-- **Windows**: SmartScreen may warn you. Click "More info" and then "Run anyway".
+I don't want to pay Apple to notarize this app (really Apple?) so please follow the following instruction to run this:
+
+1. Open the `.dmg` and drag **Readme Viewer** into **Applications**
+2. Open Readme Viewer. macOS will say it can't verify the app. Click **Done**, not "Move to Trash"
+3. Open **System Settings** and go to **Privacy & Security**
+4. Scroll down to the Security section. You'll see a message about Readme Viewer being blocked, click **Open Anyway**
+5. Confirm with your password or Touch ID, then click **Open Anyway** one more time
+
+That's it, you only have to do this once. Updates installed from inside the app don't trigger the warning again.
+
+If you're comfortable with the terminal, this does the same thing in one go:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Readme Viewer.app"
+```
+
+### Windows
+
+The installer isn't code signed either, so SmartScreen may show "Windows protected your PC". Click **More info** and then **Run anyway**.
+
+### Linux
+
+The AppImage needs to be made executable first:
+
+```sh
+chmod +x Readme.Viewer_*_amd64.AppImage
+./Readme.Viewer_*_amd64.AppImage
+```
+
+The `.deb` and `.rpm` install like any other package.
 
 ### Making it the default for markdown files
 
