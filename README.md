@@ -102,3 +102,7 @@ pnpm tauri signer generate -w ~/.tauri/readme-viewer.key
 The workflow is already set up for macOS signing and notarization. It turns on by itself once these secrets exist: `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD` and `APPLE_TEAM_ID`. See the [Tauri docs](https://v2.tauri.app/distribute/sign/macos/) for how to get them.
 
 For Windows, add a `signCommand` under `bundle.windows` in `tauri.conf.json` (Azure Trusted Signing works well and is fairly cheap). The [Windows signing guide](https://v2.tauri.app/distribute/sign/windows/) has the details.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE). You're free to use, change, fork and release it, as long as you keep the license and the [NOTICE](NOTICE) file with your copy and mention what you changed. The license doesn't cover the Readme Viewer name or icon, so forks should go by their own name.

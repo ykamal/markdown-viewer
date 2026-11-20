@@ -62,6 +62,9 @@
       "deb",
       "rpm"
     ],
+    "copyright": "Copyright 2026 Yousof K.",
+    "license": "Apache-2.0",
+    "licenseFile": "../LICENSE",
     "fileAssociations": [
       {
         "ext": [

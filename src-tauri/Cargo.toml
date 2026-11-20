@@ -3,6 +3,7 @@ name = "readme-viewer"
 version = "0.0.1"
 description = "A fast markdown viewer"
 authors = ["Yousof K."]
+license = "Apache-2.0"
 edition = "2024"
 
 [lib]
