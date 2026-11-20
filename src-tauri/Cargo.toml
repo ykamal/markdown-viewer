@@ -1,5 +1,5 @@
 [package]
-name = "readme-viewer"
+name = "markdown-viewer"
 version = "0.0.3"
 description = "A fast markdown viewer"
 authors = ["Yousof K."]
@@ -7,7 +7,7 @@ license = "Apache-2.0"
 edition = "2024"
 
 [lib]
-name = "readme_viewer_lib"
+name = "markdown_viewer_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

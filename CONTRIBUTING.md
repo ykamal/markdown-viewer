@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for wanting to help out. Readme Viewer is a small project run by one person, so the process is kept simple and a bit strict.
+Thanks for wanting to help out. Markdown Viewer is a small project run by one person, so the process is kept simple and a bit strict.
 
 ## Issues
 

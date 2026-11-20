@@ -143,7 +143,7 @@ function closeTab(tab: Tab) {
   } else {
     start.hidden = false;
     hideToast();
-    appWindow.setTitle("Readme Viewer");
+    appWindow.setTitle("Markdown Viewer");
     changed();
   }
 }

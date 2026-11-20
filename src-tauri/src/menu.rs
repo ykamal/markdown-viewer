@@ -69,7 +69,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
     let mut menus: Vec<Submenu<Wry>> = Vec::new();
     if cfg!(target_os = "macos") {
         menus.push(
-            SubmenuBuilder::new(app, "Readme Viewer")
+            SubmenuBuilder::new(app, "Markdown Viewer")
                 .about(None)
                 .separator()
                 .item(&updates)
@@ -120,11 +120,11 @@ pub fn handle(app: &AppHandle, id: &str) {
 fn make_default(app: &AppHandle) {
     let text = if cfg!(target_os = "windows") {
         let _ = tauri_plugin_opener::open_url("ms-settings:defaultapps", None::<&str>);
-        "In Default apps, search for .md and pick Readme Viewer."
+        "In Default apps, search for .md and pick Markdown Viewer."
     } else if cfg!(target_os = "macos") {
-        "In Finder, select any .md file and press Cmd+I. Under \"Open with\", pick Readme Viewer and click \"Change All…\"."
+        "In Finder, select any .md file and press Cmd+I. Under \"Open with\", pick Markdown Viewer and click \"Change All…\"."
     } else {
-        "Right click any .md file in your file manager, open its properties and pick Readme Viewer as the default app."
+        "Right click any .md file in your file manager, open its properties and pick Markdown Viewer as the default app."
     };
     app.dialog().message(text).title("Set as default").show(|_| {});
 }

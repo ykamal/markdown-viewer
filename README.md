@@ -1,4 +1,4 @@
-# Readme Viewer
+# Markdown Viewer
 
 A small, fast markdown viewer for macOS, Windows and Linux. It's built with Tauri, so the installer stays tiny and it opens pretty much instantly.
 
@@ -6,8 +6,8 @@ It's only a viewer. There's no editor, and that's realy on purpose.
 
 I have to review a lot of markdown files but could not find something that suits my needs. Hopefully, this is helpful to someone.
 
-![Readme Viewer screenshot](./screenshots/SCR-20261120-qnmn.png)
-![Readme Viewer screenshot](./screenshots/SCR-20261120-qoad.png)
+![Markdown Viewer screenshot](./screenshots/SCR-20261120-qnmn.png)
+![Markdown Viewer screenshot](./screenshots/SCR-20261120-qoad.png)
 
 
 ## What it does
@@ -25,16 +25,16 @@ Everything is bundled with the app, so it works fully offline. The only network 
 
 ## Install
 
-Grab the latest build from the [releases page](https://github.com/ykamal/readme-viewer/releases).
+Grab the latest build from the [releases page](https://github.com/ykamal/markdown-viewer/releases).
 
 | OS | File |
 |---|---|
-| macOS (Apple Silicon, M1 and newer) | `Readme.Viewer_x.y.z_aarch64.dmg` |
-| macOS (Intel) | `Readme.Viewer_x.y.z_x64.dmg` |
-| Windows | `Readme.Viewer_x.y.z_x64-setup.exe` |
-| Linux (any distro) | `Readme.Viewer_x.y.z_amd64.AppImage` |
-| Debian, Ubuntu | `Readme.Viewer_x.y.z_amd64.deb` |
-| Fedora, openSUSE | `Readme.Viewer-x.y.z-1.x86_64.rpm` |
+| macOS (Apple Silicon, M1 and newer) | `Markdown.Viewer_x.y.z_aarch64.dmg` |
+| macOS (Intel) | `Markdown.Viewer_x.y.z_x64.dmg` |
+| Windows | `Markdown.Viewer_x.y.z_x64-setup.exe` |
+| Linux (any distro) | `Markdown.Viewer_x.y.z_amd64.AppImage` |
+| Debian, Ubuntu | `Markdown.Viewer_x.y.z_amd64.deb` |
+| Fedora, openSUSE | `Markdown.Viewer-x.y.z-1.x86_64.rpm` |
 
 You can ignore `latest.json`, the `.app.tar.gz` files and the `.sig` files, those are for the auto updater.
 
@@ -44,10 +44,10 @@ Auto updates work for the macOS, Windows and AppImage builds. If you installed t
 
 I don't want to pay Apple to notarize this app (really Apple?) so please follow the following instruction to run this:
 
-1. Open the `.dmg` and drag **Readme Viewer** into **Applications**
-2. Open Readme Viewer. macOS will say it can't verify the app. Click **Done**, not "Move to Trash"
+1. Open the `.dmg` and drag **Markdown Viewer** into **Applications**
+2. Open Markdown Viewer. macOS will say it can't verify the app. Click **Done**, not "Move to Trash"
 3. Open **System Settings** and go to **Privacy & Security**
-4. Scroll down to the Security section. You'll see a message about Readme Viewer being blocked, click **Open Anyway**
+4. Scroll down to the Security section. You'll see a message about Markdown Viewer being blocked, click **Open Anyway**
 5. Confirm with your password or Touch ID, then click **Open Anyway** one more time
 
 That's it, you only have to do this once. Updates installed from inside the app don't trigger the warning again.
@@ -55,7 +55,7 @@ That's it, you only have to do this once. Updates installed from inside the app 
 If you're comfortable with the terminal, this does the same thing in one go:
 
 ```sh
-xattr -dr com.apple.quarantine "/Applications/Readme Viewer.app"
+xattr -dr com.apple.quarantine "/Applications/Markdown Viewer.app"
 ```
 
 ### Windows
@@ -67,8 +67,8 @@ The installer isn't code signed either, so SmartScreen may show "Windows protect
 The AppImage needs to be made executable first:
 
 ```sh
-chmod +x Readme.Viewer_*_amd64.AppImage
-./Readme.Viewer_*_amd64.AppImage
+chmod +x Markdown.Viewer_*_amd64.AppImage
+./Markdown.Viewer_*_amd64.AppImage
 ```
 
 The `.deb` and `.rpm` install like any other package.
@@ -133,10 +133,10 @@ Releases are built by GitHub Actions when you push a version tag.
 Updates have to be signed, otherwise the app won't install them. Generate a key pair once:
 
 ```sh
-pnpm tauri signer generate -w ~/.tauri/readme-viewer.key
+pnpm tauri signer generate -w ~/.tauri/markdown-viewer.key
 ```
 
-- Put the contents of `~/.tauri/readme-viewer.key.pub` in `plugins.updater.pubkey` in `src-tauri/tauri.conf.json`
+- Put the contents of `~/.tauri/markdown-viewer.key.pub` in `plugins.updater.pubkey` in `src-tauri/tauri.conf.json`
 - Add these repo secrets on GitHub: `TAURI_SIGNING_PRIVATE_KEY` (contents of the private key file) and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
 - Back up the private key somewhere safe. If you loose it, existing installs can never update again.
 
@@ -152,4 +152,4 @@ Issues and ideas are welcome. Pull requests are limited to collaborators, see [C
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE). You're free to use, change, fork and release it, as long as you keep the license and the [NOTICE](NOTICE) file with your copy and mention what you changed. The license doesn't cover the Readme Viewer name or icon, so forks should go by their own name.
+Licensed under the [Apache License 2.0](LICENSE). You're free to use, change, fork and release it, as long as you keep the license and the [NOTICE](NOTICE) file with your copy and mention what you changed. The license doesn't cover the Markdown Viewer name or icon, so forks should go by their own name.

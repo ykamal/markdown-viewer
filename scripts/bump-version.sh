@@ -32,7 +32,7 @@ fi
 
 NEXT="$next" perl -0pi -e 's/"version": "[^"]*"/"version": "$ENV{NEXT}"/' package.json src-tauri/tauri.conf.json
 NEXT="$next" perl -0pi -e 's/^version = "[^"]*"/version = "$ENV{NEXT}"/m' src-tauri/Cargo.toml
-NEXT="$next" perl -0pi -e 's/(name = "readme-viewer"\nversion = )"[^"]*"/$1"$ENV{NEXT}"/' src-tauri/Cargo.lock
+NEXT="$next" perl -0pi -e 's/(name = "markdown-viewer"\nversion = )"[^"]*"/$1"$ENV{NEXT}"/' src-tauri/Cargo.lock
 
 echo "Bumped $current -> $next in package.json, tauri.conf.json, Cargo.toml and Cargo.lock"
 echo "Next: commit and push, then run scripts/release-tag.sh"
