@@ -5,6 +5,7 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { createDoc, loadDoc, renderDoc, type Doc } from "./doc";
 import { element } from "./dom";
 import { basename } from "./paths";
+import { hideToast, showToast } from "./toast";
 
 export interface OpenRequest {
   path: string;
@@ -69,9 +70,11 @@ function indexAt(x: number, skip?: Tab) {
   return index < 0 ? others.length : index;
 }
 
-export function reloadPath(path: string) {
+export async function reloadPath(path: string) {
   const tab = tabs.find((t) => t.doc.path === path);
-  if (tab) refresh(tab, true);
+  if (tab && (await refresh(tab, true)) && tab === active) {
+    showToast(`${basename(path)} changed on disk and was reloaded`);
+  }
 }
 
 export function hasTabs() {
@@ -113,6 +116,7 @@ async function refresh(tab: Tab, read: boolean) {
 }
 
 function activate(tab: Tab) {
+  if (tab !== active) hideToast();
   active?.el.classList.remove("active");
   active?.doc.scroller.classList.remove("active");
   active = tab;
@@ -138,6 +142,7 @@ function closeTab(tab: Tab) {
     activate(next);
   } else {
     start.hidden = false;
+    hideToast();
     appWindow.setTitle("Readme Viewer");
     changed();
   }
