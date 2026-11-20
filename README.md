@@ -115,12 +115,17 @@ The frontend is plain TypeScript in `src/`, no framework. The Rust side in `src-
 
 Releases are built by GitHub Actions when you push a version tag.
 
-1. Bump `version` in `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` and `package.json`
-2. Commit, then tag and push:
+1. Bump the version. Pass a version number or `patch`, `minor` or `major`:
    ```sh
-   git tag v0.2.0
-   git push origin main --tags
+   scripts/bump-version.sh patch
    ```
+2. Commit and push, then tag the release:
+   ```sh
+   git commit -am "bump to 0.2.0"
+   git push
+   scripts/release-tag.sh
+   ```
+   The tag script reads the version from `package.json`, refuses to run if that tag already exists, and pushes the new tag.
 3. The workflow creates a draft release with all the installers. Publish it and everyone will recieve the update.
 
 ### One time setup for updates
