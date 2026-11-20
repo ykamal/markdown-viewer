@@ -6,6 +6,10 @@ It's only a viewer. There's no editor, and that's realy on purpose.
 
 I have to review a lot of markdown files but could not find something that suits my needs. Hopefully, this is helpful to someone.
 
+![Readme Viewer screenshot](./screenshots/SCR-20261120-qnmn.png)
+![Readme Viewer screenshot](./screenshots/SCR-20261120-qoad.png)
+
+
 ## What it does
 
 - Renders GitHub flavored markdown: tables, task lists, footnotes, alerts (`> [!NOTE]`), emoji shortcodes and raw HTML like `<details>` or centered images
