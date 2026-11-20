@@ -16,12 +16,11 @@ let scroller: HTMLElement | undefined;
 let frame = 0;
 let selected = -1;
 
-sidebar.hidden = localStorage.getItem("toc") === "closed";
+const opened = new WeakSet<Doc>();
 sidebar.style.width = `${Number(localStorage.getItem("toc-width")) || 260}px`;
 
 export function toggleToc(show = sidebar.hidden) {
   sidebar.hidden = !show;
-  localStorage.setItem("toc", show ? "open" : "closed");
 }
 
 export function searchToc() {
@@ -31,6 +30,10 @@ export function searchToc() {
 }
 
 export function updateToc(doc?: Doc) {
+  if (doc && !opened.has(doc)) {
+    opened.add(doc);
+    toggleToc(true);
+  }
   scroller?.removeEventListener("scroll", onScroll);
   scroller = doc?.scroller;
   scroller?.addEventListener("scroll", onScroll, { passive: true });
