@@ -1,6 +1,6 @@
 [package]
 name = "readme-viewer"
-version = "0.1.0"
+version = "0.0.1"
 description = "A fast markdown viewer"
 authors = ["Yousof K."]
 edition = "2024"
