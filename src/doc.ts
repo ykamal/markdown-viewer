@@ -7,6 +7,7 @@ import { dirname, isMarkdown, resolvePath } from "./paths";
 export interface Doc {
   path: string;
   source: string;
+  loading: boolean;
   scroller: HTMLElement;
   body: HTMLElement;
 }
@@ -37,12 +38,16 @@ export function createDoc(path: string, openMarkdown: (path: string) => void): D
     }
   });
 
-  return { path, source: "", scroller, body };
+  return { path, source: "", loading: true, scroller, body };
 }
 
 export async function loadDoc(doc: Doc) {
-  doc.source = await invoke<string>("read_file", { path: doc.path });
-  await renderDoc(doc);
+  try {
+    doc.source = await invoke<string>("read_file", { path: doc.path });
+    await renderDoc(doc);
+  } finally {
+    doc.loading = false;
+  }
 }
 
 export async function renderDoc(doc: Doc) {

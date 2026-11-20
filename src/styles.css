@@ -499,6 +499,33 @@ kbd {
   padding-left: 10px;
 }
 
+.toc-skeleton {
+  height: 10px;
+  margin: 9px 10px 9px 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--hover) 25%, var(--pressed) 50%, var(--hover) 75%) 0 0 / 300% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.toc-skeleton.toc-h3 {
+  margin-left: 24px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-skeleton {
+    animation: none;
+  }
+}
+
 .toc-empty {
   margin: 0;
   padding: 8px 18px;

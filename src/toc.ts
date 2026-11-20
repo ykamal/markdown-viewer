@@ -17,6 +17,12 @@ let frame = 0;
 let selected = -1;
 
 const opened = new WeakSet<Doc>();
+const skeleton = [1, 2, 2, 3, 3, 2, 3, 2].map((level, i) => {
+  const row = document.createElement("div");
+  row.className = `toc-skeleton toc-h${level}`;
+  row.style.width = `${[70, 55, 80, 45, 60, 75, 50, 65][i]}%`;
+  return row;
+});
 sidebar.style.width = `${Number(localStorage.getItem("toc-width")) || 260}px`;
 
 export function toggleToc(show = sidebar.hidden) {
@@ -38,6 +44,14 @@ export function updateToc(doc?: Doc) {
   scroller = doc?.scroller;
   scroller?.addEventListener("scroll", onScroll, { passive: true });
   title.textContent = doc ? basename(doc.path) : "No file open";
+
+  if (doc?.loading) {
+    headings = [];
+    links = [];
+    empty.hidden = true;
+    nav.replaceChildren(...skeleton);
+    return;
+  }
 
   headings = doc ? [...doc.body.querySelectorAll<HTMLElement>("h1, h2, h3, h4")] : [];
   links = headings.map((heading) => {
