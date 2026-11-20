@@ -670,6 +670,19 @@ kbd {
   color: var(--fg);
 }
 
+.app-version {
+  margin-bottom: 14px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--hover);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-version:empty {
+  display: none;
+}
+
 .welcome p {
   margin: 0 0 18px;
 }

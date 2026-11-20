@@ -1,3 +1,4 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
@@ -30,6 +31,7 @@ const appWindow = getCurrentWindow();
 const dropOverlay = element("#drop-overlay");
 document.documentElement.classList.toggle("mac", mac);
 element("#open-shortcut").textContent = mac ? "⌘O" : "Ctrl+O";
+getVersion().then((version) => (element("#app-version").textContent = `Version ${version}`));
 
 function openPaths(paths: string[]) {
   for (const path of paths) openTab({ path, scroll: 0 });
