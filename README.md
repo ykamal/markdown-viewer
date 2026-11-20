@@ -4,6 +4,8 @@ A small, fast markdown viewer for macOS, Windows and Linux. It's built with Taur
 
 It's only a viewer. There's no editor, and that's realy on purpose.
 
+I have to review a lot of readme files but could not find something that suits my needs. Hopefully, this is helpful to someone.
+
 ## What it does
 
 - Renders GitHub flavored markdown: tables, task lists, footnotes, alerts (`> [!NOTE]`), emoji shortcodes and raw HTML like `<details>` or centered images
