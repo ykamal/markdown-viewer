@@ -8,6 +8,8 @@ const fileIcon =
 const section = element("#recent");
 const list = element("#recent-list");
 
+element("#recent-clear").addEventListener("click", () => invoke("clear_recent"));
+
 export async function showRecent(open: (path: string) => void) {
   const render = (paths: string[]) => {
     section.hidden = !paths.length;

@@ -68,7 +68,8 @@ pub fn run() {
             watcher::watch,
             watcher::unwatch,
             recent::recent_files,
-            recent::add_recent
+            recent::add_recent,
+            recent::clear_recent
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

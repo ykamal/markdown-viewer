@@ -56,6 +56,11 @@ pub fn clear(app: &AppHandle) {
 }
 
 #[tauri::command]
+pub fn clear_recent(app: AppHandle) {
+    clear(&app);
+}
+
+#[tauri::command]
 pub fn recent_files(state: State<Recent>) -> Vec<String> {
     state.list()
 }
