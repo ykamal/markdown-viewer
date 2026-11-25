@@ -1,6 +1,4 @@
 mod menu;
-#[cfg(target_os = "macos")]
-mod print;
 mod recent;
 mod watcher;
 mod windows;
@@ -18,9 +16,6 @@ async fn read_file(path: PathBuf) -> Result<String, String> {
 
 #[tauri::command]
 fn print_page(window: tauri::WebviewWindow) -> Result<(), String> {
-    #[cfg(target_os = "macos")]
-    return window.with_webview(print::print).map_err(|e| e.to_string());
-    #[cfg(not(target_os = "macos"))]
     window.print().map_err(|e| e.to_string())
 }
 
