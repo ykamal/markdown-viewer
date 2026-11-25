@@ -935,6 +935,10 @@ mark.find-hit.current {
   padding-top: 72px;
 }
 
+@page {
+  margin: 20mm 18mm;
+}
+
 @media print {
   html,
   body,
